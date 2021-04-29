@@ -1,3 +1,4 @@
 # Hide cache files
 slprj
 *.slxc
+*.asv
