@@ -1,4 +1,3 @@
-% Simulacion proyecto final
 % Control de un Accionamiento de CA con PMSM
 clear; clc;
 
@@ -50,12 +49,3 @@ R_ts_amb = 146.7; % Resistencia termica estator - ambiente [°C/W]
 R_s_40 = 1.02; % Resistencia estator a 40°C [ohm]
 alpha_cu = 3.9e-1; % Coef aumento Rs con Ts(t) [1/°C]
 
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%           PARAMETROS DE SIMULACION
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-t_stop = 3; % [s]
-T_s = t_stop/300; % [s]
-options = simset('fixedstep', T_s);
-
-% Simular
-sim('sistema_completo_nl', t_stop, options); 
