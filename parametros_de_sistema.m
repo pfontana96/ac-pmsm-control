@@ -49,3 +49,7 @@ R_ts_amb = 146.7; % Resistencia termica estator - ambiente [°C/W]
 R_s_40 = 1.02; % Resistencia estator a 40°C [ohm]
 alpha_cu = 3.9e-1; % Coef aumento Rs con Ts(t) [1/°C]
 
+% --------------------------------------------------
+% Parametros promedio para sistema LTI simplificado
+% --------------------------------------------------
+R_s_prom = (1.32 - 1.02)/2; % Promedio resistencias dato (a 40°C y 115°C)
