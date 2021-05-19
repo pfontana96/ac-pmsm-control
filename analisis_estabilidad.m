@@ -21,10 +21,12 @@ p = pole(H)
 z = zero(H)
 
 % Gráfico de los polos y ceros
-pzmap(H)
-grid on
+%pzmap(H)
+%grid on
 
+%-------------------------------------------------
 % Teniendo en cuenta las variaciones de J_l y b_l
+%-------------------------------------------------
 dJ_l = 0.1260; % [kg.m2]
 db_l = 0.0630; % [N.m.s/rad]
 
@@ -43,3 +45,22 @@ z_min = zero(H_min)
 %pzmap(H,H_max,H_min)
 %grid on
 
+%-------------------------------------------------
+% Teniendo en cuenta las variaciones de R_s con T°
+%-------------------------------------------------
+
+for R_s = 1.02:0.05:1.32
+    H = tf([L_q  R_s],[L_q*J_eq  b_eq*L_q+J_eq*R_s  b_eq*R_s+(3*P_p^2*lambda_m^2)/2  0]);
+    H_max = tf([L_q  R_s],[L_q*J_eq_max  b_eq_max*L_q+J_eq_max*R_s  b_eq_max*R_s+(3*P_p^2*lambda_m^2)/2  0]);
+    H_min = tf([L_q  R_s],[L_q*J_eq_min  b_eq_min*L_q+J_eq_min*R_s  b_eq_min*R_s+(3*P_p^2*lambda_m^2)/2  0]);
+    pzmap(H,'g',H_max,'r',H_min,'b')
+    hold on
+end
+grid on
+
+%-------------------------------------------------
+% Calculo de frecuencia natural y amortiguamiento
+%-------------------------------------------------
+R_s = 1.02; % A 40°C
+w_n = ((b_eq*R_s + (3*P_p^2*lambda_m^2)/2)/(L_q*J_eq))^(1/2)
+ksi = (b_eq*L_q + J_eq*R_s)/(2*L_q*J_eq*w_n)
