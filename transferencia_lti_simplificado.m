@@ -11,9 +11,29 @@ C = [1 0 0];
 D = [0 0 0];
 
 sys_tf = (C/(s*eye(3)-A))*B + D;
-sys_tf
-simplify(sys_tf)
+disp(sys_tf);
+% simplify(sys_tf)
+%=================================================
+%                Estabilidad
+%=================================================
+disp("==== ESTABILIDAD - polos del sistema");
+poles = simplify(poles(sys_tf(1)));
+disp(poles);
 
+disp("==== ESTABILIDAD - ceros del sistema");
+% Zros para transferencia OMEGA(s)/V_D(s)
+disp("Ceros OMEGA(s)/V_D(s):");
+[num, ~] = numden(sys_tf(1));
+eqn = num == 0;
+zeros = simplify(solve(eqn));
+disp(zeros);
+
+% Zros para transferencia OMEGA(s)/T_L(s)
+disp("Ceros OMEGA(s)/T_L(s):");
+[num, ~] = numden(sys_tf(2));
+eqn = num == 0;
+zeros = simplify(solve(eqn));
+disp(zeros);
 
 %=================================================
 %                Observabilidad

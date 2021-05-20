@@ -1,99 +1,107 @@
 clear;clc;close all;
+parametros_de_sistema;
+% Sistema LTI simplificado
+syms J b R_s;
+A = [0 1                 0 
+     0 -b/J        3*P_p*lambda_m/(2*J)
+     0 -P_p*lambda_m/L_q -R_s/L_q];
+B = [ 0     0           0
+      0     -1/(J*r) 0
+      1/L_q 0           0];
+C = [1 0 0];
+D = [0 0 0];
 
-J_m = 3.1e-6; % [kg.m2]
-b_m = 1.5e-5; % [N.m.s/rad]
-J_l = 0.2520; % [kg.m2]
-b_l = 0; % [N.m.s/rad]
-r = 314.3008; % Relacion de transmision r:1
-J_eq = J_m + J_l/r^2; % Momento de inercia equivalente [kg.m2]
-b_eq = b_m + b_l/r^2; % Amortiguamiento viscoso equivalente [N.m.s/rad]
-P_p = 3; % Pares de polos magneticos (6 polos)
-lambda_m = 0.01546; % Flujo magnetico eq de imanes [V.s/rad]
-L_q = 5.8e-3; % Inductancia estator eje en cuadratura [H]
-R_s = 1.02;
-% % Funcion de transferencia
-% H = tf([L_q  R_s],[L_q*J_eq  b_eq*L_q+J_eq*R_s  b_eq*R_s+(3*P_p^2*lambda_m^2)/2  0])
-% 
-% % Calculo de polos de la funcion
-% p = pole(H)
-% 
-% % Calculo de zeros de la funcion
-% z = zero(H)
+%-------------------------------------------------
+% Analisis en valores nominales de J_l y b_l
+%-------------------------------------------------
+A_nom = double(subs(A, [J b R_s], [J_eq b_eq R_s_40]));
+B_nom = double(subs(B, J, J_eq));
+[num, den] = ss2tf(A_nom, B_nom, C, D, 2); %ni=1 => entrada en T_l (por el cero)
+sys_nom = tf(num, den);
 
+disp("Calculo de polos para Rs(40°C) y valores nominales");
+p = vpa(pole(sys_nom));
+disp(p)
+
+disp("Calculo de ceros para Rs(40°C) y valores nominales");
+z = zero(sys_nom);
+disp(z)
 % Gráfico de los polos y ceros
-%pzmap(H)
-%grid on
+figure(1)
+pzmap(sys_nom, 'b')
+grid on
 
 %-------------------------------------------------
 % Teniendo en cuenta las variaciones de J_l y b_l
 %-------------------------------------------------
-dJ_l = 0.1260; % [kg.m2]
-db_l = 0.0630; % [N.m.s/rad]
-
+% Valores maximos
 J_eq_max = J_m + (J_l+dJ_l)/r^2;
 b_eq_max = b_m + (b_l+db_l)/r^2;
-% H_max = tf([L_q  R_s],[L_q*J_eq_max  b_eq_max*L_q+J_eq_max*R_s  b_eq_max*R_s+(3*P_p^2*lambda_m^2)/2  0]);
-% p_max = pole(H_max)
-% z_max = zero(H_max)
+A_max = double(subs(A, [J b R_s], [J_eq_max b_eq_max R_s_40]));
+B_max = double(subs(B, J, J_eq_max));
+[num, den] = ss2tf(A_max, B_max, C, D, 2); %ni=1 => entrada en T_l (por el cero)
+sys_max = tf(num, den);
 
+p_max = vpa(pole(sys_max));
+z_max = zero(sys_max);
+
+% Valores minimos
 J_eq_min = J_m + (J_l-dJ_l)/r^2;
 b_eq_min = b_m + (b_l-db_l)/r^2;
-% H_min = tf([L_q  R_s],[L_q*J_eq_min  b_eq_min*L_q+J_eq_min*R_s  b_eq_min*R_s+(3*P_p^2*lambda_m^2)/2  0]);
-% p_min = pole(H_min)
-% z_min = zero(H_min)
+A_min = double(subs(A, [J b R_s], [J_eq_min b_eq_min R_s_40]));
+B_min = double(subs(B, J, J_eq_min));
+[num, den] = ss2tf(A_min, B_min, C, D, 2); %ni=1 => entrada en T_l (por el cero)
+sys_min = tf(num, den);
 
-%pzmap(H,H_max,H_min)
-%grid on
+p_min = vpa(pole(sys_min));
+z_min = zero(sys_min);
+
+figure(2)
+pzmap(sys_nom, 'b', sys_max, 'r', sys_min, 'g')
+grid on
+legend('Nominal', 'Maximo', 'Minimo');
 
 %-------------------------------------------------
 % Teniendo en cuenta las variaciones de R_s con T°
 %-------------------------------------------------
 % 
-% for R_s = 1.02:0.05:1.32
-%     H = tf([L_q  R_s],[L_q*J_eq  b_eq*L_q+J_eq*R_s  b_eq*R_s+(3*P_p^2*lambda_m^2)/2  0]);
-%     H_max = tf([L_q  R_s],[L_q*J_eq_max  b_eq_max*L_q+J_eq_max*R_s  b_eq_max*R_s+(3*P_p^2*lambda_m^2)/2  0]);
-%     H_min = tf([L_q  R_s],[L_q*J_eq_min  b_eq_min*L_q+J_eq_min*R_s  b_eq_min*R_s+(3*P_p^2*lambda_m^2)/2  0]);
-%     pzmap(H,'g',H_max,'r',H_min,'b')
-%     hold on
-% end
-% grid on
+figure(3)
+for R_s_i = 1.02:0.05:1.32
+    A_nom_i = double(subs(A, [J b R_s], [J_eq b_eq R_s_i]));
+    A_max_i = double(subs(A, [J b R_s], [J_eq_max b_eq_max R_s_i]));
+    A_min_i = double(subs(A, [J b R_s], [J_eq_min b_eq_min R_s_i]));
+
+    [num, den] = ss2tf(A_nom_i, B_nom, C, D, 2);
+    sys_nom_i = tf(num, den);
+    [num, den] = ss2tf(A_max_i, B_max, C, D, 2);
+    sys_max_i = tf(num, den);    
+    [num, den] = ss2tf(A_min_i, B_min, C, D, 2);
+    sys_min_i = tf(num, den);    
+    
+    pzmap(sys_nom_i, 'b', sys_max_i, 'r', sys_min_i,'g')
+    hold on
+end
+grid on
+legend('Nominal', 'Maximo', 'Minimo');
 
 %=================================================
 % Calculo de frecuencia natural y amortiguamiento
 %=================================================
 disp("Frecuencia natural y amortiguamiento a 40°C")
-R_s = 1.02; % A 40°C
-w_n = ((b_eq*R_s + (3*P_p^2*lambda_m^2)/2)/(L_q*J_eq))^(1/2);
-ksi = (b_eq*L_q + J_eq*R_s)/(2*L_q*J_eq*w_n);
-
-% Valores minimos y máximos de los coeficientes equivalentes
-w_n_max = ((b_eq_max*R_s + (3*P_p^2*lambda_m^2)/2)/(L_q*J_eq_max))^(1/2);
-ksi_max = (b_eq_max*L_q + J_eq_max*R_s)/(2*L_q*J_eq_max*w_n);
-
-w_n_min = ((b_eq_min*R_s + (3*P_p^2*lambda_m^2)/2)/(L_q*J_eq_min))^(1/2);
-ksi_min = (b_eq_min*L_q + J_eq_min*R_s)/(2*L_q*J_eq_min*w_n);
+[wn_nom, zeta_nom] = damp(sys_nom);
+[wn_max, zeta_max] = damp(sys_max);
+[wn_min, zeta_min] = damp(sys_min);
 
 disp(".   | nominal    |    max     |    min ")
-X = sprintf('w_n | %f | %f | %f ',w_n,w_n_max,w_n_min);
-disp(X)
-X = sprintf('ksi | %f   | %f   | %f ',ksi,ksi_max,ksi_min);
-disp(X)
+fprintf('w_n | %f | %f | %f\n', wn_nom(2), wn_max(2), wn_min(2))
+fprintf('ksi | %f   | %f   | %f\n', zeta_nom(2), zeta_max(2), zeta_min(2))
 
 disp("Frecuencia natural y amortiguamiento a 115°C")
-R_s = 1.32; % A 115°C
-w_n = ((b_eq*R_s + (3*P_p^2*lambda_m^2)/2)/(L_q*J_eq))^(1/2);
-ksi = (b_eq*L_q + J_eq*R_s)/(2*L_q*J_eq*w_n);
-
-% Valores minimos y máximos de los coeficientes equivalentes
-w_n_max = ((b_eq_max*R_s + (3*P_p^2*lambda_m^2)/2)/(L_q*J_eq_max))^(1/2);
-ksi_max = (b_eq_max*L_q + J_eq_max*R_s)/(2*L_q*J_eq_max*w_n);
-
-w_n_min = ((b_eq_min*R_s + (3*P_p^2*lambda_m^2)/2)/(L_q*J_eq_min))^(1/2);
-ksi_min = (b_eq_min*L_q + J_eq_min*R_s)/(2*L_q*J_eq_min*w_n);
+[wn_nom_115, zeta_nom_115] = damp(sys_nom_i); % sys_nom_i = Sistema a 115 °C (ver bucle for arriba)
+[wn_max_115, zeta_max_115] = damp(sys_max_i);
+[wn_min_115, zeta_min_115] = damp(sys_min_i);
 
 disp(".   | nominal    |    max     |    min ")
-X = sprintf('w_n | %f | %f | %f ',w_n,w_n_max,w_n_min);
-disp(X)
-X = sprintf('ksi | %f   | %f   | %f ',ksi,ksi_max,ksi_min);
-disp(X)
+fprintf('w_n | %f | %f | %f\n', wn_nom_115(2), wn_max_115(2), wn_min_115(2))
+fprintf('ksi | %f   | %f   | %f\n', zeta_nom_115(2), zeta_max_115(2), zeta_min_115(2))
 

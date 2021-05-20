@@ -47,6 +47,7 @@ b_eq = b_m + b_l/r^2; % Amortiguamiento viscoso equivalente [N.m.s/rad]
 C_ts = 0.818; % Capacitancia termica de estator [W.s/°C]
 R_ts_amb = 146.7; % Resistencia termica estator - ambiente [°C/W]
 R_s_40 = 1.02; % Resistencia estator a 40°C [ohm]
+R_s_115 = 1.32; % Resistencia estator a 115°C [ohm]
 alpha_cu = 3.9e-1; % Coef aumento Rs con Ts(t) [1/°C]
 
 % --------------------------------------------------
