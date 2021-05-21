@@ -64,9 +64,12 @@ legend('Nominal', 'Maximo', 'Minimo');
 %-------------------------------------------------
 % Teniendo en cuenta las variaciones de R_s con T°
 %-------------------------------------------------
-% 
+
 figure(3)
-for R_s_i = 1.02:0.05:1.32
+n = 10;
+dT_i = 115/(10+1);
+for T_i = 0:dT_i:115
+    R_s_i = R_s_40*(1 + alpha_cu*(T_i - 40));
     A_nom_i = double(subs(A, [J b R_s], [J_eq b_eq R_s_i]));
     A_max_i = double(subs(A, [J b R_s], [J_eq_max b_eq_max R_s_i]));
     A_min_i = double(subs(A, [J b R_s], [J_eq_min b_eq_min R_s_i]));
@@ -78,8 +81,17 @@ for R_s_i = 1.02:0.05:1.32
     [num, den] = ss2tf(A_min_i, B_min, C, D, 2);
     sys_min_i = tf(num, den);    
     
-    pzmap(sys_nom_i, 'b', sys_max_i, 'r', sys_min_i,'g')
+    pzmap(sys_max_i, 'r', sys_min_i, 'g', sys_nom_i, 'b');
     hold on
+    if (floor(T_i) == 41) || (ceil(T_i) == 115)
+        hm = findobj(gca, 'Type', 'Line');          % Handle To 'Line' Objects
+        hm(2).LineWidth = 2;                      % ‘Zero’ Marker
+        hm(3).LineWidth = 2;                      % ‘Pole’ Marker
+        hm(4).LineWidth = 2;                      % ‘Zero’ Marker
+        hm(5).LineWidth = 2;                      % ‘Pole’ Marker
+        hm(6).LineWidth = 2;                      % ‘Zero’ Marker
+        hm(7).LineWidth = 2;                      % ‘Pole’ Marker
+    end
 end
 grid on
 legend('Nominal', 'Maximo', 'Minimo');
