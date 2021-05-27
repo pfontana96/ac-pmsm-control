@@ -94,7 +94,7 @@ for T_i = 0:dT_i:115
     end
 end
 grid on
-legend('Nominal', 'Maximo', 'Minimo');
+legend('Máximos', 'Minimos', 'Nominales');
 
 %=================================================
 % Calculo de frecuencia natural y amortiguamiento
