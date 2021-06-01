@@ -54,3 +54,28 @@ alpha_cu = 3.9e-3; % Coef aumento Rs con Ts(t) [1/°C]
 % Parametros promedio para sistema LTI simplificado
 % --------------------------------------------------
 R_s_prom = (1.32 - 1.02)/2; % Promedio resistencias dato (a 40°C y 115°C)
+
+% --------------------------------------------------
+% Parametros Modulador de torque - Control esclavo
+% --------------------------------------------------
+polo = -5000; % [rad/s]
+R_q = -polo*L_q; % [ohm]
+R_d = -polo*L_d; % [ohm]
+R_0 = -polo*L_ls; % [ohm]
+
+% --------------------------------------------------
+% Parametros Controlador PID - Control maestro
+% --------------------------------------------------
+w_pos = 800; % [rad/s]
+n = 2.5;
+
+K_d = J_eq*n*w_pos;
+K_p = J_eq*n*w_pos^2;
+K_i = J_eq*w_pos^3;
+
+% --------------------------------------------------
+% Parametros de Observador
+% --------------------------------------------------
+obs_p = -3200; % [rad/s]
+Ke_theta = -2*obs_p;
+Ke_w = obs_p^2;

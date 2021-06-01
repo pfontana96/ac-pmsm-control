@@ -1,7 +1,16 @@
+% Calculo de funciones de transferencia, analisis de estabilidad, analisis
+% de observabilidad y controlabilidad
+% 
+% Modo de uso:
+% Seleccionar 'evaluate' de acuerdo al sistema a analizar ("simplificado" o "aumentado")
+% En caso de querer evaluar el sistema LTI AUMENTADO con vds(t) como una
+% variable manipulada, setear el valor de 'agregar_vds' a 'true'
+
+
 clear; clc;
 % evaluate = "simplificado";
 evaluate = "aumentado";
-agregar_vds = true;
+agregar_vds = false;
 
 fprintf("ANALISIS PARA SISTEMA LTI %s\n-------------------------------------\n", evaluate);
 syms b_eq J_eq P_p lambda_m L_q R_s r s L_d theta_m omega_m iqs ids vqs Tl vds;
@@ -98,7 +107,9 @@ for i=1:n
     fprintf("El sistema es %s desde %s por que su rango = %d\n", display_msg, char(x(i)), rango);
 end
 
-fprintf("Rango matriz observabilidad para C = [1 0 0 1]: %d\n", rank(observabilidad_kalman(A, [1 0 0 1])));
+% Criterio de observabilidad para [theta_m(t), ids(t)]
+O_theta_ids = observabilidad_kalman(A, [1 0 0 1]);
+fprintf("Rango matriz observabilidad para C = [1 0 0 1]: %d\n", rank(O_theta_ids));
 
 %=================================================
 %                Controlabilidad
@@ -124,7 +135,7 @@ else
 end
 disp("Matriz de controlabilidad");
 disp(C_);
-% fprintf("El sistema es %s desde %s por que su rango = %d\n", display_msg, entradas_msg, rango);
+fprintf("El sistema es %s desde %s por que su rango = %d\n", display_msg, entradas_msg, rango);
 
 function O_ = observabilidad_kalman(A, C)
 n = length(A);
