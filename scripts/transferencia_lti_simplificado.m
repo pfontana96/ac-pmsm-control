@@ -62,7 +62,14 @@ O_ = [C
       C*A
       C*(A*A)]
 fprintf('Rango de observabilidad: %d -> NO es observable desde la salida i_q\n',rank(O_));
- 
+
+disp('Modelo LTI AUMENTADO -> dinamica residual del eje d, que agrega i_d que no tiene entrada')
+A_aum = [[A(:,1);0] [A(:,2);0] [A(:,3);0] [0;0;0;-R_s/L_d]];
+C =  [1 0 0]; % theta_m
+O_ = [C
+      C*A
+      C*(A*A)]
+fprintf('Rango de observabilidad: %d -> es observable desde la salida theta_m',rank(O_));  
 %=================================================
 %                Controlabilidad
 %=================================================
@@ -73,8 +80,8 @@ fprintf('Rango de controlabilidad: %d -> el modelo LTI SIMPLIFICADO es controlab
 disp('Modelo LTI AUMENTADO -> dinamica residual del eje d, que agrega i_d que no tiene entrada')
 disp(' => sistema NO es totalmente controlable desde v_q')
 disp(' ==> se agrega una entrada al eje d')
-B_aux = [[B(:,1);0] [0; 0; 0; 1/L_d]];
-A_aux = [[A(:,1);0] [A(:,2);0] [A(:,3);0] [0;0;0;-R_s/L_d]];
-C_ = [B_aux, A_aux*B_aux, (A_aux*A_aux)*B_aux]
+B_aum = [[B(:,1);0] [0; 0; 0; 1/L_d]];
+A_aum = [[A(:,1);0] [A(:,2);0] [A(:,3);0] [0;0;0;-R_s/L_d]];
+C_ = [B_aum, A_aum*B_aum, (A_aum*A_aum)*B_aum]
 fprintf('Rango de controlabilidad: %d -> el modelo LTI AUMENTADO es controlable desde v_q y v_d',rank(C_));
  
