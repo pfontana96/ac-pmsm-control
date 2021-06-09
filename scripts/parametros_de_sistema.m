@@ -89,7 +89,8 @@ xi_sensor_curr = 1;
 % En espacio de estados (Forma canónica controlable)
 b0_sensor_curr = 0;
 b1_sensor_curr = 0;
-b2_sensor_curr = 1;
+%%%b2_sensor_curr = 1;
+b2_sensor_curr = wn_sensor_curr^2;
 a1_sensor_curr = 2*xi_sensor_curr*wn_sensor_curr;
 a2_sensor_curr = wn_sensor_curr^2;
 
@@ -107,7 +108,8 @@ xi_sensor_pos = 1;
 % En espacio de estados (Forma canónica controlable)
 b0_sensor_pos = 0;
 b1_sensor_pos = 0;
-b2_sensor_pos = 1;
+%%%b2_sensor_pos = 1;
+b2_sensor_pos = wn_sensor_pos^2;
 a1_sensor_pos = 2*xi_sensor_pos*wn_sensor_pos;
 a2_sensor_pos = wn_sensor_pos^2;
 
