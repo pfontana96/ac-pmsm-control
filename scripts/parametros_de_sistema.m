@@ -83,7 +83,7 @@ Ke_w = obs_p^2;
 % --------------------------------------------------
 % Parametros de sensores de corriente
 % --------------------------------------------------
-wn_sensor_curr = 6000; % [rad/s]
+wn_sensor_curr = 6000*3; % [rad/s]
 xi_sensor_curr = 1;
 
 % En espacio de estados (Forma canónica controlable)
@@ -102,7 +102,7 @@ D_sensor_curr = b0_sensor_curr;
 % --------------------------------------------------
 % Parametros de sensores de corriente
 % --------------------------------------------------
-wn_sensor_pos = 2000; % [rad/s]
+wn_sensor_pos = 2000*3; % [rad/s]
 xi_sensor_pos = 1; 
 
 % En espacio de estados (Forma canónica controlable)
@@ -118,3 +118,12 @@ A_sensor_pos = [0               1
 B_sensor_pos = [0; 1];
 C_sensor_pos = [(b2_sensor_pos-a2_sensor_pos*b0_sensor_pos) (b1_sensor_pos-a1_sensor_pos*b0_sensor_pos)];
 D_sensor_pos = b0_sensor_pos;
+
+% --------------------------------------------------
+% Parametros de perfil modificado de velocidad
+% --------------------------------------------------
+% Valido para escalones en velocidad
+t_step = 5; % [s]
+w_max = 0.59*691.15; % [rad/s]
+t_rise = 5 - ((2*pi*r)/w_max); % [s]
+t_high = 5 - 2*t_rise;% [s]
