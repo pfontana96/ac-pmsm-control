@@ -53,7 +53,7 @@ alpha_cu = 3.9e-3; % Coef aumento Rs con Ts(t) [1/°C]
 % --------------------------------------------------
 % Parametros promedio para sistema LTI simplificado
 % --------------------------------------------------
-R_s_prom = (1.32 - 1.02)/2; % Promedio resistencias dato (a 40°C y 115°C)
+R_s_prom = (1.32 + 1.02)/2; % Promedio resistencias dato (a 40°C y 115°C)
 
 % --------------------------------------------------
 % Parametros Modulador de torque - Control esclavo
@@ -123,7 +123,7 @@ D_sensor_pos = b0_sensor_pos;
 % Parametros de perfil modificado de velocidad
 % --------------------------------------------------
 % Valido para escalones en velocidad
-t_step = 5; % [s]
+t_step = 5.; % [s]
 w_max = 0.59*691.15; % [rad/s]
-t_rise = 5 - ((2*pi*r)/w_max); % [s]
-t_high = 5 - 2*t_rise;% [s]
+t_rise = t_step - ((2*pi*r)/w_max); % [s]
+t_high = t_step - 2*t_rise;% [s]
