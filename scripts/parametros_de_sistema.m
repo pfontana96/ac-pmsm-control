@@ -89,7 +89,6 @@ xi_sensor_curr = 1;
 % En espacio de estados (Forma canónica controlable)
 b0_sensor_curr = 0;
 b1_sensor_curr = 0;
-%%%b2_sensor_curr = 1;
 b2_sensor_curr = wn_sensor_curr^2;
 a1_sensor_curr = 2*xi_sensor_curr*wn_sensor_curr;
 a2_sensor_curr = wn_sensor_curr^2;
@@ -99,8 +98,9 @@ A_sensor_curr = [0               1
 B_sensor_curr = [0; 1];
 C_sensor_curr = [(b2_sensor_curr-a2_sensor_curr*b0_sensor_curr) (b1_sensor_curr-a1_sensor_curr*b0_sensor_curr)];
 D_sensor_curr = b0_sensor_curr;
+
 % --------------------------------------------------
-% Parametros de sensores de corriente
+% Parametros de sensor de posicion
 % --------------------------------------------------
 wn_sensor_pos = 2000*3; % [rad/s]
 xi_sensor_pos = 1; 
@@ -108,7 +108,6 @@ xi_sensor_pos = 1;
 % En espacio de estados (Forma canónica controlable)
 b0_sensor_pos = 0;
 b1_sensor_pos = 0;
-%%%b2_sensor_pos = 1;
 b2_sensor_pos = wn_sensor_pos^2;
 a1_sensor_pos = 2*xi_sensor_pos*wn_sensor_pos;
 a2_sensor_pos = wn_sensor_pos^2;
@@ -118,6 +117,19 @@ A_sensor_pos = [0               1
 B_sensor_pos = [0; 1];
 C_sensor_pos = [(b2_sensor_pos-a2_sensor_pos*b0_sensor_pos) (b1_sensor_pos-a1_sensor_pos*b0_sensor_pos)];
 D_sensor_pos = b0_sensor_pos;
+
+% --------------------------------------------------
+% Parametros de sensor de temperatura
+% --------------------------------------------------
+tau = 20; % [s]
+b0_sensor_temp = 0;
+b1_sensor_temp = 1/tau;
+a1_sensor_temp = 1/tau;
+
+A_sensor_temp = -a1_sensor_temp;
+B_sensor_temp = 1;
+C_sensor_temp = (b1_sensor_temp - a1_sensor_temp*b0_sensor_temp);
+D_sensor_temp = b0_sensor_temp;
 
 % --------------------------------------------------
 % Parametros de perfil modificado de velocidad
